@@ -10,21 +10,21 @@ export const axiosStandart = axios.create({
 
 export const axiosRequest = axios.create({
     baseURL: API,
-    // headers: {'Authorization' : `Bearer ${localStorage.getItem('token')}`}
-
+    headers: {'Authorization' : `Bearer ${localStorage.getItem('tokenForAdmin')}`}
+// 
 })
 
-axiosRequest.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('tokenForAdmin')
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-        }
-        return config
-    },
+// axiosRequest.interceptors.request.use(
+//     (config) => {
+//         const token = localStorage.getItem('tokenForAdmin')
+//         if (token) {
+//             config.headers.Authorization = `Bearer ${token}`
+//         }
+//         return config
+//     },
 
-    (error) => {
-        return Promise.reject(error)
-    }
-)
+//     (error) => {
+//         return Promise.reject(error)
+//     }
+// )
 

@@ -16,6 +16,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { useProducts } from "@/store/products/products";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Products = () => {
   const { products, getProducts } = useProducts();
@@ -28,28 +29,47 @@ const Products = () => {
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "productName", headerName: "Product Name", width: 130 },
-    { field: "image", headerName: "Image", width: 130 },
+    { field: "image", headerName: "Image", width: 100,
+      renderCell: (params) => (
+        <div className="flex items-center ">
+        <img src={`http://37.27.29.18:8002/images/${params.value}`} alt="" className="w-[50px] h-[50px] rounded-[5px] " />
+        </div>
+      )
+     },
+    { field: "productName", headerName: "Product Name", width: 160 },
+      {
+      field: "quantity",
+      headerName: "Inventory",
+      width: 120,
+      renderCell: (params) => (params.value > 0 ? `${params.value} in stock` : 'Out of Stock')
+    },
     {
       field: "price",
       headerName: "Price",
-      type: "number",
-      width: 90,
+      width: 130,
+      renderCell: (params) => `$${params.value}`
     },
     {
       field: "categoryName",
       headerName: "Category",
-      width: 90,
+      width: 150,
     },
+  
     {
-      field: "quantity",
-      headerName: "Quantity",
-      description: "This column has a value getter and is not sortable.",
-      sortable: false,
-      width: 160,
-      valueGetter: (value, row) =>
-        `${row.firstName || ""} ${row.lastName || ""}`,
-    },
+      field: "actions",
+      headerName: 'Actions',
+      width: 150,
+      renderCell: () => (
+        <Box>
+            <IconButton color="primary">
+              <BorderColorIcon/>
+            </IconButton>
+            <IconButton color="error">
+              <DeleteIcon/>
+            </IconButton>
+        </Box>
+      )
+    }
   ];
 
   const paginationModel = { page: 0, pageSize: 5 };
@@ -58,9 +78,11 @@ const Products = () => {
     <div>
       <div className="flex justify-between ">
         <h2 className="font-bold text-2xl text-[#111927]   ">Products</h2>
+        <Link to={'/add-products'}>
         <Button variant="contained" className="font-medium  ">
           + Add products
         </Button>
+        </Link>
       </div>
 
       <div className="flex justify-between items-center my-10 mb-6 ">
