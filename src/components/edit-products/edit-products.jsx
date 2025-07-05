@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import {
   Box,
@@ -13,34 +13,26 @@ import {
   DialogTitle,
   DialogActions,
   DialogContent,
-  IconButton,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import { useState, useEffect, Fragment } from "react";
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
 import CloseIcon from "@mui/icons-material/Close";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useProducts } from "@/store/products/products";
 
-export default function AddProducts() {
+export default function EditProducts() {
   const navigate = useNavigate();
-  const [selectedColor, setSelectedColor] = useState(null);
-  let [images, setImages] = useState([]);
+
   const {
-    colors,
-    getProducts,
+    getProductByID,
+    productsByID,
     brands,
     getSubcategories,
     subcategories,
-    setAddProducts,
+    editProduct,
+     colors
   } = useProducts();
+
   const [open, setOpen] = useState(false);
   const [productName, setProductName] = useState("");
   const [code, setCode] = useState("");
@@ -49,8 +41,9 @@ export default function AddProducts() {
   const [productPrice, setProductPrice] = useState("");
   const [discount, setDiscount] = useState("");
   const [count, setCount] = useState("");
-  const [desctiption, setDesctiption] = useState("");
-
+  const [description, setDescription] = useState("");
+  const [selectedColor, setSelectedColor] = useState(null);
+  const { id } = useParams();
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -65,53 +58,44 @@ export default function AddProducts() {
   };
 
   useEffect(() => {
-    getProducts();
+    getProductByID(id);
     getSubcategories();
   }, []);
 
-    function handleBase64(e) {
-    const files = Array.from(e.target.files);
-    const previewImages = [];
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        previewImages.push({
-          file: file,
-          dataUrl: reader.result,
-          name: file.name,
-        });
+  useEffect(() => {
+    if (productsByID?.productName) {
+      setProductName(productsByID.productName); 
+      setCode(productsByID.code);
+      setDescription(productsByID.description); 
+      setBrandSelect(productsByID.brand);
+      setProductPrice(productsByID.price);
+      setDiscount(productsByID.discountPrice);
+      setCount(productsByID.quantity);
+    }
+  }, [productsByID]);
 
-        if (previewImages.length === files.length) {
-          setImages(previewImages);
-        }
-      };
+function handleSubmit(e) {
+  e.preventDefault();
 
-      reader.readAsDataURL(file);
-    });
-  }
+  const formData = {
+    Id: productsByID.id,
+    BrandId: brandSelect,
+    DiscountPrice: discount,
+    Price: productPrice,
+    Quantity: count,
+    Code: code,
+    ColorId: selectedColor,
+    SubCategoryId: subCategory,
+    ProductName: productName,
+    Description: description,
+    HasDiscount: false,
+  };
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("BrandId", brandSelect);
-    formData.append("DiscountPrice", discount);
-    formData.append("Price", productPrice);
-    formData.append("Quantity", count);
-    formData.append("Code", code);
+  editProduct(formData); 
+  clearAllForm();
+  navigate("/products"); 
+}
 
-    images.forEach((img) => {
-      formData.append("Images", img.file);
-    });
-
-    formData.append("SubCategoryId", subCategory);
-    formData.append("ProductName", productName);
-    formData.append("HasDiscount", false);
-    formData.append("Description", desctiption);
-    formData.append("ColorId", selectedColor);
-    setAddProducts(formData);
-    clearAllForm();
-    navigate("/products");
-  }
 
   function clearAllForm() {
     setProductName(""),
@@ -120,13 +104,8 @@ export default function AddProducts() {
       setProductPrice(""),
       setDiscount(""),
       setCount(""),
-      setDesctiption(""),
-      setCode(""),
-      setImages([]);
-  }
-
-  function handleDeleteImages(name, index) {
-    setImages(images.filter((img) => img.name !== name && img.index !== index));
+      setDescription(""),
+      setCode("");
   }
 
   return (
@@ -139,7 +118,7 @@ export default function AddProducts() {
               className="cursor-pointer"
             />
             <h3 className="text-2xl text-[#111927] font-bold">
-              Products / Add new
+              Products / Edit Products {id}
             </h3>
           </div>
 
@@ -178,8 +157,8 @@ export default function AddProducts() {
                 label="Description"
                 multiline
                 rows={4}
-                value={desctiption}
-                onChange={({ target }) => setDesctiption(target.value)}
+                value={description}
+                onChange={({ target }) => setDescription(target.value)}
                 fullWidth
                 sx={{ mt: 2 }}
               />
@@ -209,9 +188,9 @@ export default function AddProducts() {
                   value={brandSelect}
                   onChange={({ target }) => setBrandSelect(target.value)}
                 >
-                  {brands.map((brand) => (
-                    <MenuItem key={brand.id} value={brand.id}>
-                      {brand.brandName}
+                  {brands.map((el) => (
+                    <MenuItem key={el.id} value={el.id}>
+                      {el.brandName}
                     </MenuItem>
                   ))}
                 </Select>
@@ -288,7 +267,7 @@ export default function AddProducts() {
                   <div
                     key={color.id}
                     className={`w-8 h-8 rounded-full cursor-pointer ${color.id === selectedColor ? "border-2 border-blue-600" : "border-transparent"}`}
-                    style={{ backgroundColor: color.colorName }}
+                    style={{ backgroundColor: productsByID.color }}
                     onClick={() => setSelectedColor(color.id)}
                   ></div>
                 ))}
@@ -320,88 +299,6 @@ export default function AddProducts() {
                 )}
               </div>
             </div>
-
-            {/*  Intikhob kardani suratho  */}
-            <div>
-              <h2 className="font-bold text-[#131523] mb-2">Images</h2>
-            </div>
-            <label
-              htmlFor="file-upload"
-              className="border-2 border-dashed border-gray-300 rounded-md px-6 py-10 flex flex-col items-center justify-center cursor-pointer text-center hover:bg-gray-50 transition"
-            >
-              <svg
-                className="w-10 h-10 text-gray-400 mb-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M4 12l8-8m0 0l8 8m-8-8v16"
-                />
-              </svg>
-              <p className="text-sm font-medium text-blue-600">
-                Click to upload
-              </p>
-              <p className="text-xs text-gray-500">or drag and drop</p>
-              <p className="text-xs text-gray-400 mt-1">
-                (SVG, JPG, PNG, or GIF max 900x400)
-              </p>
-              <input
-                id="file-upload"
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handleBase64}
-              />
-            </label>
-
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 200 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Image</TableCell>
-                    <TableCell align="right">File Name</TableCell>
-                    <TableCell align="right">Action</TableCell>
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  {images?.map((image, index) => {
-                    return (
-                      <TableRow
-                        key={index}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell align="right">
-                          <img
-                            className="w-[54px] h-[54px] rounded-[8px] "
-                            src={image.dataUrl}
-                            alt=""
-                          />
-                        </TableCell>
-                        <TableCell align="right">{image.name}</TableCell>
-                        <TableCell align="right">
-                          <IconButton
-                            onClick={() =>
-                              handleDeleteImages(image.name, index)
-                            }
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
           </aside>
         </section>
         <Fragment>

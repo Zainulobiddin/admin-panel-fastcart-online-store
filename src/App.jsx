@@ -6,6 +6,8 @@ import Products from "/src/pages/Products/products";
 import Other from "/src/pages/Other/other";
 import LogIn from "./components/log-in/log-in";
 import AddProducts from "./components/add-products/add-products";
+import EditProducts from "./components/edit-products/edit-products";
+import Brands from "./components/brands/brands";
 function App() {
   const router = createBrowserRouter([
     {
@@ -33,7 +35,14 @@ function App() {
           path: "/other",
           element: <Other />,
         },
-        
+        {
+          path: "/edit-products/:id",
+          element: <EditProducts />,
+        },
+        {
+          path: '/brands',
+          element: <Brands/>
+        }
       ],
     },
     {

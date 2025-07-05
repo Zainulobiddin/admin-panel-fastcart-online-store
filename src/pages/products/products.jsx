@@ -19,9 +19,12 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Products = () => {
-  const { products, getProducts } = useProducts();
+  const { products, getProducts, deleteProduct} = useProducts();
 
-  console.log("products =", products);
+  function handleDeleteProduct(id) {
+    deleteProduct(id)
+  }
+  
 
   useEffect(() => {
     getProducts();
@@ -59,12 +62,14 @@ const Products = () => {
       field: "actions",
       headerName: 'Actions',
       width: 150,
-      renderCell: () => (
+      renderCell: (params) => (
         <Box>
+          <Link to={`/edit-products/${params.id}`}>
             <IconButton color="primary">
               <BorderColorIcon/>
             </IconButton>
-            <IconButton color="error">
+          </Link>
+            <IconButton color="error" onClick={() => handleDeleteProduct(params.id)}>
               <DeleteIcon/>
             </IconButton>
         </Box>
