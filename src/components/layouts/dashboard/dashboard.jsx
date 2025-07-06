@@ -5,13 +5,14 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import LayersIcon from "@mui/icons-material/Layers";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-
+import LogoutIcon from '@mui/icons-material/Logout';
 const NAVIGATION = [
   { kind: "header", title: "Main items" },
   { segment: "", title: "Dasboard", icon: <DashboardIcon /> },
   { segment: "orders", title: "Orders", icon: <ShoppingCartIcon /> },
   { segment: "products", title: "Products", icon: <LayersIcon /> },
   { segment: "other", title: "Other", icon: <BarChartIcon /> },
+  { segment: "log-in", title: "Logout", icon: <LogoutIcon /> },
 ];
 
 const demoTheme = extendTheme({

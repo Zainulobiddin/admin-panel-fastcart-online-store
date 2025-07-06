@@ -8,6 +8,8 @@ import LogIn from "./components/log-in/log-in";
 import AddProducts from "./components/add-products/add-products";
 import EditProducts from "./components/edit-products/edit-products";
 import Brands from "./components/brands/brands";
+import Subcategories from "./components/subcategories/subcategories";
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -42,6 +44,10 @@ function App() {
         {
           path: '/brands',
           element: <Brands/>
+        },
+        {
+          path: '/subcategories',
+          element: <Subcategories/>
         }
       ],
     },
