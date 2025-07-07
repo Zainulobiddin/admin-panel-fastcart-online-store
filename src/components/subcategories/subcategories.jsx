@@ -22,11 +22,31 @@ import {
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { NavLink } from "react-router-dom";
+import { useCategories } from "@/store/categories/categories";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 export default function Subcategories() {
-  const { subCategories, getSubCategories, deleteSubcategories } =
-    useSubcategories();
+  const {
+    subCategories,
+    getSubCategories,
+    deleteSubcategories,
+    addSubCategories,
+    editSubCategories,
+  } = useSubcategories();
   const [open, setOpen] = useState(false);
+  const { categories, getCategories } = useCategories();
+  const [selectSub, setSelectSub] = useState("");
+  const [subName, setSubName] = useState("");
+  const [subNameEdit, setSubNameEdit] = useState("");
+  const [idx, setIdx] = useState(null);
+  const [findCategoryID, setFindCategoryID] = useState(null);
+
+  function handleSub(e) {
+    setSelectSub(e.target.value);
+  }
 
   const handleClickOpen = () => setOpen(true);
 
@@ -34,15 +54,33 @@ export default function Subcategories() {
     setOpen(false);
   };
 
-  //   function handleEdit() {
-  //     handleClickOpen();
-  //   }
+  function handleEdit(sub) {
+    categories.find((category) =>
+      category?.subCategories.find((el) =>
+        el.id === sub.id ? setFindCategoryID(category.id) : null
+      )
+    );
+    console.log("find = ", findCategoryID);
+    handleClickOpen();
+    setSubNameEdit(sub.subCategoryName);
+    setIdx(sub.id);
+  }
 
+  function handleSaveEdit() {
+    editSubCategories(idx, findCategoryID, subNameEdit);
+    console.log(idx, findCategoryID, subNameEdit);
+    setOpen(false);
+  }
+
+  function handleAddBrand() {
+    addSubCategories(selectSub, subName);
+  }
 
   // useEffect()
 
   useEffect(() => {
     getSubCategories();
+    getCategories();
   }, []);
 
   return (
@@ -50,21 +88,13 @@ export default function Subcategories() {
       <header className="flex justify-between items-center py-8">
         <ul className="flex gap-2">
           <NavLink
-            className={({ isActive }) =>
-              isActive
-                ? "py-2 px-4 rounded-[4px] bg-[#DBEAFE] text-[#1D4ED8]"
-                : "py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8]"
-            }
+            className="py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8] "
             to={"/other"}
           >
             Categories
           </NavLink>
           <NavLink
-            className={({ isActive }) =>
-              isActive
-                ? "py-2 px-4 rounded-[4px] bg-[#DBEAFE] text-[#1D4ED8]"
-                : "py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8]"
-            }
+            className="py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8] "
             to={"/brands"}
           >
             Brands
@@ -104,7 +134,7 @@ export default function Subcategories() {
                     <Box className="flex gap-3">
                       <IconButton
                         color="primary"
-                        // onClick={() => handleEdit(sub.id)}
+                        onClick={() => handleEdit(sub)}
                       >
                         <BorderColorIcon />
                       </IconButton>
@@ -121,7 +151,7 @@ export default function Subcategories() {
               ))}
             </TableBody>
           </Table>
-          {/* add modal */}
+          {/* edit modal */}
           <Fragment>
             <Dialog
               open={open}
@@ -136,9 +166,9 @@ export default function Subcategories() {
                 <form className="flex flex-col gap-6 ">
                   <TextField
                     label="Subcategory name"
-                    // value={brandNameEdit}
+                    value={subNameEdit}
                     className="w-full"
-                    // onChange={({ target }) => setBrandNameEdit(target.value)}
+                    onChange={({ target }) => setSubNameEdit(target.value)}
                   />
 
                   <DialogActions>
@@ -152,7 +182,7 @@ export default function Subcategories() {
                     <Button
                       autoFocus
                       variant="contained"
-                      //   onClick={handleSaveEdit}
+                      onClick={handleSaveEdit}
                     >
                       Create
                     </Button>
@@ -163,24 +193,34 @@ export default function Subcategories() {
           </Fragment>
         </TableContainer>
 
-        <div className="border border-[#E5E5E5] rounded-[4px] w-[50%] h-[228px] flex flex-col gap-6 p-7">
+        <div className="border border-[#E5E5E5] rounded-[4px] w-[50%] h-[328px] flex flex-col gap-6 p-7">
           <div className="flex flex-col gap-6">
             <Typography variant="h5">Add new subcategory</Typography>
-            <TextField
-              label="Category ID"
-              //   value={brandName}
-              //   onChange={({ target }) => setBrandName(target.value)}
-            />
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={selectSub}
+                  label="Category"
+                  onChange={handleSub}
+                >
+                  {categories.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.categoryName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
             <TextField
               label="Subcategory name"
-              //   value={brandName}
-              //   onChange={({ target }) => setBrandName(target.value)}
+              value={subName}
+              onChange={({ target }) => setSubName(target.value)}
             />
           </div>
-          <Button
-            variant="contained"
-            //    onClick={handleAddBrand}
-          >
+          <Button variant="contained" onClick={handleAddBrand}>
             Create
           </Button>
         </div>

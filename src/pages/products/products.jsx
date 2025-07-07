@@ -15,16 +15,22 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { useProducts } from "@/store/products/products";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Products = () => {
-  const { products, getProducts, deleteProduct} = useProducts();
+  const { products, getProducts, deleteProduct, searchProducts } =
+    useProducts();
+  const [search, setSearch] = useState("");
+
+  function handleSearch(e) {
+    setSearch(e.target.value);
+    searchProducts(search);
+  }
 
   function handleDeleteProduct(id) {
-    deleteProduct(id)
+    deleteProduct(id);
   }
-  
 
   useEffect(() => {
     getProducts();
@@ -32,49 +38,60 @@ const Products = () => {
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "image", headerName: "Image", width: 100,
+    {
+      field: "image",
+      headerName: "Image",
+      width: 100,
       renderCell: (params) => (
         <div className="flex items-center ">
-        <img src={`http://37.27.29.18:8002/images/${params.value}`} alt="" className="w-[50px] h-[50px] rounded-[5px] " />
+          <img
+            src={`http://37.27.29.18:8002/images/${params.value}`}
+            alt=""
+            className="w-[50px] h-[50px] rounded-[5px] "
+          />
         </div>
-      )
-     },
+      ),
+    },
     { field: "productName", headerName: "Product Name", width: 160 },
-      {
+    {
       field: "quantity",
       headerName: "Inventory",
       width: 120,
-      renderCell: (params) => (params.value > 0 ? `${params.value} in stock` : 'Out of Stock')
+      renderCell: (params) =>
+        params.value > 0 ? `${params.value} in stock` : "Out of Stock",
     },
     {
       field: "price",
       headerName: "Price",
       width: 130,
-      renderCell: (params) => `$${params.value}`
+      renderCell: (params) => `$${params.value}`,
     },
     {
       field: "categoryName",
       headerName: "Category",
       width: 150,
     },
-  
+
     {
       field: "actions",
-      headerName: 'Actions',
+      headerName: "Actions",
       width: 150,
       renderCell: (params) => (
         <Box>
           <Link to={`/edit-products/${params.id}`}>
             <IconButton color="primary">
-              <BorderColorIcon/>
+              <BorderColorIcon />
             </IconButton>
           </Link>
-            <IconButton color="error" onClick={() => handleDeleteProduct(params.id)}>
-              <DeleteIcon/>
-            </IconButton>
+          <IconButton
+            color="error"
+            onClick={() => handleDeleteProduct(params.id)}
+          >
+            <DeleteIcon />
+          </IconButton>
         </Box>
-      )
-    }
+      ),
+    },
   ];
 
   const paginationModel = { page: 0, pageSize: 5 };
@@ -83,10 +100,10 @@ const Products = () => {
     <div>
       <div className="flex justify-between ">
         <h2 className="font-bold text-2xl text-[#111927]   ">Products</h2>
-        <Link to={'/add-products'}>
-        <Button variant="contained" className="font-medium  ">
-          + Add products
-        </Button>
+        <Link to={"/add-products"}>
+          <Button variant="contained" className="font-medium  ">
+            + Add products
+          </Button>
         </Link>
       </div>
 
@@ -102,6 +119,8 @@ const Products = () => {
             id="outlined-basic"
             variant="outlined"
             label="Search"
+            value={search}
+            onChange={handleSearch}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

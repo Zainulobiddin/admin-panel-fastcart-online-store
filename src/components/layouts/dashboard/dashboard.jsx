@@ -12,7 +12,7 @@ const NAVIGATION = [
   { segment: "orders", title: "Orders", icon: <ShoppingCartIcon /> },
   { segment: "products", title: "Products", icon: <LayersIcon /> },
   { segment: "other", title: "Other", icon: <BarChartIcon /> },
-  { segment: "log-in", title: "Logout", icon: <LogoutIcon /> },
+  { segment: "log-in", title: "Login", icon: <LogoutIcon /> },
 ];
 
 const demoTheme = extendTheme({

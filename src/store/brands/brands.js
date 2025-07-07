@@ -1,4 +1,5 @@
 import { axiosRequest, axiosStandart } from "@/utils/axios";
+import { toast } from "sonner";
 import { create } from "zustand";
 
 export const useBrands = create((set, get) => ({
@@ -9,8 +10,10 @@ export const useBrands = create((set, get) => ({
     try {
       const { data } = await axiosStandart.get(`/Brand/get-brands`);
       set({ brands: data.data });
+      toast.info('brand successfull get')
     } catch (error) {
       console.error(error);
+      toast.error(`${error}`)
     }
   },
 
@@ -18,8 +21,11 @@ export const useBrands = create((set, get) => ({
     try {
       await axiosRequest.post(`/Brand/add-brand?BrandName=${name}`);
       get().getBrands();
+      toast.info(`brand successfull added`)
     } catch (error) {
       console.error(error);
+      toast.error(`${error}`)
+
     }
   },
 
@@ -27,8 +33,10 @@ export const useBrands = create((set, get) => ({
     try {
       await axiosRequest.delete(`/Brand/delete-brand?id=${id}`);
       get().getBrands();
+      toast.info(`brand successfull deleted`)
     } catch (error) {
       console.error(error);
+      toast.error(`${error}`)
     }
   },
 
@@ -47,8 +55,10 @@ export const useBrands = create((set, get) => ({
     try {
       await axiosRequest.put(`/Brand/update-brand?Id=${id}&BrandName=${name}`);
       get().getBrands();
+      toast.info(`brand successfull edited`)
     } catch (error) {
       console.error(error);
+      toast.error(`${error}`)
     }
   },
 }));

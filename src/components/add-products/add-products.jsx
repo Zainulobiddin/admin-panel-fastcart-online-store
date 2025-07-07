@@ -109,6 +109,7 @@ export default function AddProducts() {
     formData.append("Description", desctiption);
     formData.append("ColorId", selectedColor);
     setAddProducts(formData);
+    
     clearAllForm();
     navigate("/products");
   }

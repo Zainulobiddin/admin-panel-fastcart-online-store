@@ -32,8 +32,7 @@ const Other = () => {
   const [img, setImg] = useState(null);
   const [editId, setEditId] = useState(null);
 
-  const handleClickOpen = () =>  setOpen(true);
-  
+  const handleClickOpen = () => setOpen(true);
 
   const handleClose = () => {
     setOpen(false);
@@ -101,8 +100,7 @@ const Other = () => {
       formData.append("CategoryImage", img[i]);
     }
     editCategories(formData);
-    setOpenEdit(false)
-
+    setOpenEdit(false);
   }
 
   // useEffect()
@@ -114,9 +112,28 @@ const Other = () => {
     <div className="flex flex-col gap-8">
       <header className="flex justify-between items-center">
         <ul className="flex gap-2">
-          <NavLink className='py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8] ' to={"/other"}>Categories</NavLink>
-          <NavLink className='py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8] ' to={"/brands"}>Brands</NavLink>
-          <NavLink className='py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8] ' to={'/subcategories'}>Subcategories</NavLink>
+          <NavLink
+            className={({ isActive }) =>
+              isActive
+                ? "py-2 px-4 rounded-[4px] bg-[#DBEAFE] text-[#1D4ED8]"
+                : "py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8]"
+            }
+            to={"/other"}
+          >
+            Categories
+          </NavLink>
+          <NavLink
+            className="py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8] "
+            to={"/brands"}
+          >
+            Brands
+          </NavLink>
+          <NavLink
+            className="py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8] "
+            to={"/subcategories"}
+          >
+            Subcategories
+          </NavLink>
         </ul>
         <Button variant="contained" onClick={handleClickOpen}>
           + Add new

@@ -71,7 +71,11 @@ export default function Brands() {
             Categories
           </NavLink>
           <NavLink
-            className="py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8] "
+            className={({ isActive }) =>
+              isActive
+                ? "py-2 px-4 rounded-[4px] bg-[#DBEAFE] text-[#1D4ED8]"
+                : "py-2 px-4 rounded-[4px] hover:bg-[#DBEAFE] hover:text-[#1D4ED8]"
+            }
             to={"/brands"}
           >
             Brands
@@ -124,7 +128,7 @@ export default function Brands() {
               ))}
             </TableBody>
           </Table>
-          
+
           {/* add modal */}
           <Fragment>
             <Dialog
@@ -163,7 +167,6 @@ export default function Brands() {
               </DialogContent>
             </Dialog>
           </Fragment>
-
         </TableContainer>
 
         <div className="border border-[#E5E5E5] rounded-[4px] w-[50%] h-[228px] flex flex-col gap-6 p-7">
